@@ -53,7 +53,7 @@ the contents of such library.
 The benefit of registering a library with the Kernel is that once it's
 registered it can hook-in to Kernel via special interface and extend it.
 
-It this point only one hook is supported which enables modules to register
+At this point only one hook is supported which enables modules to register
 their own container configurations with the Kernel's DI container.
 
 > Future versions may include more extension points of course (one example
