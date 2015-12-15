@@ -1,0 +1,16 @@
+name: corsac_kernel
+version: 0.1.0-dev
+description: Generic kernel with DI container and simple module system.
+author: Anatoly Pulyaevskiy <anatoly.pulyaevskiy@gmail.com>
+homepage: https://github.com/corsac-dart/kernel
+
+environment:
+  sdk: '>=1.9.0 <2.0.0'
+
+dependencies:
+  corsac_di:
+    git: https://github.com/corsac-dart/di.git
+
+dev_dependencies:
+  test: "^0.12.4+7"
+  dart_coveralls: "^0.4.0"
