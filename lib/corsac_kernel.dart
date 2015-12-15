@@ -2,6 +2,6 @@
 library corsac_kernel;
 
 import 'dart:mirrors';
-import 'package:corsac_di/di.dart' as di;
+import 'package:corsac_di/corsac_di.dart' as di;
 
 part 'src/kernel.dart';

@@ -10,6 +10,9 @@ Kernel library built on top of Dart's library system.
  (see [Corsac DI](https://github.com/corsac-dart/di) for details).
 * Provides simple module system based on Dart's built-in libraries.
 
+Despite of how it sounds this is actually a very tiny library (current
+  implementation is way less than 100 lines of code).
+
 ## 1. Reasoning
 
 Regardless of the size of the project you are working on it is always
@@ -74,7 +77,7 @@ Simple example of registering a module with it's own service configuration:
 library my_project.user_management;
 
 import 'package:corsac_kernel/corsac_kernel.dart';
-import 'package:corsac_di/di.dart';
+import 'package:corsac_di/corsac_di.dart';
 
 // Kernel extension point. This class will be automatically discovered
 // by the Kernel during initialization.

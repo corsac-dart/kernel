@@ -58,7 +58,7 @@ class Kernel {
 ///     library my_project.user_management;
 ///
 ///     import 'package:corsac_kernel/corsac_kernel.dart';
-///     import 'package:corsac_di/di.dart' as di;
+///     import 'package:corsac_di/corsac_di.dart' as di;
 ///
 ///     class UserManagementModule extends KernelModule {
 ///       Map<dynamic, dynamic> getServiceConfiguration(String environment) {
