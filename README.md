@@ -57,11 +57,16 @@ Basically any Dart `library` (defined with `library my_project;`) can be
 registered as a module. Kernel itself is trying to make zero assumptions on
 the contents of such library.
 
+> Even though 1-to-1 relationship between modules and libraries is expected
+> there is no technical restriction to this rule. Your library can register
+> two or more modules if it wants. Though this is considered as an exception
+> to the rule.
+
 The benefit of registering a library with the Kernel is that once it's
 registered it can hook-in to Kernel via special interface and extend it.
 
 At this point only one hook is supported which enables modules to register
-their own container configurations with the Kernel's DI container.
+their own service configurations with the Kernel's DI container.
 
 > Future versions may include more extension points of course (one example
 > would be - Kernel's lifecycle events).

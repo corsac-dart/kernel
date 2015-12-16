@@ -9,10 +9,8 @@ import 'src/kernel_module_b.dart';
 void main() {
   group('Kernel:', () {
     test('it registers service configuration for modules', () {
-      var kernel = new Kernel('test', {}, [
-        new Symbol('corsac_kernel.test.module_a'),
-        new Symbol('corsac_kernel.test.module_b'),
-      ]);
+      List<KernelModule> modules = [new ModuleA(), new ModuleB()];
+      var kernel = new Kernel('test', {}, modules);
 
       expect(kernel.container.get(ModuleAService),
           new isInstanceOf<ModuleAService>());

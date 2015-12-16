@@ -30,15 +30,15 @@ class Kernel {
   /// kernel's container under the same keys which means you can reference
   /// them in your module's configuration using `di.get()`.
   ///
-  /// [moduleNames] is a list of Dart library names you wish to register with
+  /// [modules] is a list of kernel modules you wish to register with
   /// this kernel. __Please note that order of modules in this list is
   /// important__. If modules define their own service configurations then
   /// later configuration will overwrite earlier ones if keys are the same.
-  factory Kernel(String environment, Map parameters, List<Symbol> moduleNames) {
+  factory Kernel(
+      String environment, Map parameters, List<KernelModule> modules) {
     var config = new Map.from(parameters);
-    moduleNames.forEach((m) {
-      var module = _createModuleForLibrary(m);
-      config.addAll(module.getServiceConfiguration(environment));
+    modules.forEach((m) {
+      config.addAll(m.getServiceConfiguration(environment));
     });
 
     return new Kernel._(
@@ -69,39 +69,8 @@ class Kernel {
 ///       }
 ///     }
 ///
-/// Usage of this API is completely optional though. If you don't declare a
-/// subclass, Kernel will build default configuration for you.
 abstract class KernelModule {
   Map<dynamic, dynamic> getServiceConfiguration(String environment) {
-    return {};
-  }
-}
-
-KernelModule _createModuleForLibrary(Symbol libraryName) {
-  var baseModuleMirror = reflectType(KernelModule);
-  var lib = currentMirrorSystem().findLibrary(libraryName);
-  var module;
-  for (var declaration in lib.declarations.values) {
-    if (declaration is ClassMirror &&
-        declaration.superclass == baseModuleMirror) {
-      module = declaration.newInstance(new Symbol(''), []).reflectee;
-    }
-  }
-
-  if (module == null) {
-    module = new _GenericModule(libraryName);
-  }
-
-  return module;
-}
-
-class _GenericModule implements KernelModule {
-  final Symbol library;
-
-  _GenericModule(this.library);
-
-  @override
-  Map getServiceConfiguration(String environment) {
     return {};
   }
 }
