@@ -13,7 +13,7 @@ class Kernel {
   final Map<String, dynamic> parameters;
 
   /// Dependency injection container used by this kernel.
-  final di.Container container;
+  final Container container;
 
   final List<KernelModule> modules;
 
@@ -30,7 +30,7 @@ class Kernel {
   /// [parameters] is an arbitrary collection of key-value pairs which you can
   /// provide to this Kernel. These parameters will be accessible in this
   /// kernel's container under the same keys which means you can reference
-  /// them in your module's configuration using `di.get()`.
+  /// them in your module's configuration using `DI.get()`.
   ///
   /// [modules] is a list of kernel modules you wish to register with
   /// this kernel. __Please note that order of modules in this list is
@@ -44,7 +44,7 @@ class Kernel {
         .forEach((m) => config.addAll(m.getServiceConfiguration(environment)));
 
     var kernel = new Kernel._(environment, parameters,
-        new di.Container.build(config), new List.unmodifiable(modules));
+        new Container.build(config), new List.unmodifiable(modules));
 
     modules.forEach((m) => m.initialize(kernel));
 
@@ -64,13 +64,13 @@ class Kernel {
 ///     library my_project.user_management;
 ///
 ///     import 'package:corsac_kernel/corsac_kernel.dart';
-///     import 'package:corsac_di/corsac_di.dart' as di;
+///     import 'package:corsac_di/corsac_di.dart';
 ///
 ///     class UserManagementModule extends KernelModule {
 ///       Map<dynamic, dynamic> getServiceConfiguration(String environment) {
 ///         return {
-///           SomeService: di.object()
-///             ..bindParameter('host', di.env('SOME_SERVICE_HOST')),
+///           SomeService: DI.object()
+///             ..bindParameter('host', DI.env('SOME_SERVICE_HOST')),
 ///         };
 ///       }
 ///     }

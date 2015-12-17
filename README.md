@@ -92,8 +92,8 @@ class UserManagementModule extends KernelModule {
   @override
   Map<dynamic, dynamic> getServiceConfiguration(String environment) {
     return {
-      UserManager: di.object()
-        ..bindParameter('accessToken', di.env('UM_ACCESS_TOKEN')),
+      UserManager: DI.object()
+        ..bindParameter('accessToken', DI.env('UM_ACCESS_TOKEN')),
     }
   }
 }
