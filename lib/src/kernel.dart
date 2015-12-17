@@ -15,8 +15,10 @@ class Kernel {
   /// Dependency injection container used by this kernel.
   final di.Container container;
 
+  final List<KernelModule> modules;
+
   /// Internal constructor.
-  Kernel._(this.environment, this.parameters, this.container);
+  Kernel._(this.environment, this.parameters, this.container, this.modules);
 
   /// Builds new instance of Kernel.
   ///
@@ -37,12 +39,16 @@ class Kernel {
   factory Kernel(
       String environment, Map parameters, List<KernelModule> modules) {
     var config = new Map.from(parameters);
-    modules.forEach((m) {
-      config.addAll(m.getServiceConfiguration(environment));
-    });
 
-    return new Kernel._(
-        environment, parameters, new di.Container.build(config));
+    modules
+        .forEach((m) => config.addAll(m.getServiceConfiguration(environment)));
+
+    var kernel = new Kernel._(environment, parameters,
+        new di.Container.build(config), new List.unmodifiable(modules));
+
+    modules.forEach((m) => m.initialize(kernel));
+
+    return kernel;
   }
 }
 
@@ -70,7 +76,15 @@ class Kernel {
 ///     }
 ///
 abstract class KernelModule {
+  /// Returns service configuration for this module.
+  ///
+  /// Override this method to customize services provided by this module.
   Map<dynamic, dynamic> getServiceConfiguration(String environment) {
     return {};
   }
+
+  /// Runs initialization tasks for this module.
+  ///
+  /// This hook is called after [Kernel] has been fully loaded.
+  void initialize(Kernel kernel) {}
 }

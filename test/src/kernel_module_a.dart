@@ -4,4 +4,10 @@ import 'package:corsac_kernel/corsac_kernel.dart';
 
 class ModuleAService {}
 
-class ModuleA extends KernelModule {}
+class ModuleA extends KernelModule {
+  bool initialized = false;
+  @override
+  void initialize(Kernel kernel) {
+    initialized = true;
+  }
+}

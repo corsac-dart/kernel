@@ -17,5 +17,12 @@ void main() {
       var service = kernel.container.get(ModuleBInterface);
       expect(service, new isInstanceOf<ModuleBService>());
     });
+
+    test('it calls module initialization hooks', () {
+      List<KernelModule> modules = [new ModuleA(), new ModuleB()];
+      new Kernel('test', {}, modules);
+      expect((modules.first as ModuleA).initialized, isTrue);
+      expect((modules.last as ModuleB).initialized, isTrue);
+    });
   });
 }
