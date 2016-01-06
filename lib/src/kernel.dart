@@ -4,7 +4,7 @@ part of corsac_kernel;
 ///
 /// * Enables dependency inversion via built-in DI container
 ///   (see [Corsac DI](https://github.com/corsac-dart/di)).
-/// * Provides simple module system based on Dart's built-in libraries.
+/// * Provides simple module-based system.
 class Kernel {
   /// Environment for this kernel.
   final String environment;
@@ -38,18 +38,25 @@ class Kernel {
   /// later configuration will overwrite earlier ones if keys are the same.
   factory Kernel(
       String environment, Map parameters, List<KernelModule> modules) {
-    var config = new Map.from(parameters);
+    var configs = new List<Map>();
+    configs.add(new Map.from(parameters));
 
-    modules
-        .forEach((m) => config.addAll(m.getServiceConfiguration(environment)));
+    for (var m in modules) {
+      configs.add(m.getServiceConfiguration(environment));
+    }
 
     var kernel = new Kernel._(environment, parameters,
-        new Container.build(config), new List.unmodifiable(modules));
+        new Container.build(configs), new List.unmodifiable(modules));
 
     modules.forEach((m) => m.initialize(kernel));
 
     return kernel;
   }
+
+  /// Returns Kernel's container entry.
+  ///
+  /// This is just a shortcut for `container.get()`.
+  dynamic get(dynamic id) => container.get(id);
 }
 
 /// Base class for Kernel modules.
@@ -77,6 +84,8 @@ class Kernel {
 ///
 abstract class KernelModule {
   /// Returns service configuration for this module.
+  ///
+  /// Returned map is a configuration as expected by `corsac_di` container.
   ///
   /// Override this method to customize services provided by this module.
   Map<dynamic, dynamic> getServiceConfiguration(String environment) {

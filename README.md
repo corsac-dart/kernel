@@ -59,21 +59,22 @@ the contents of such library.
 
 > Even though 1-to-1 relationship between modules and libraries is expected
 > there is no technical restriction to this rule. Your library can register
-> two or more modules if it wants. Though this is considered as an exception
-> to the rule.
+> two or more modules if it wants.
 
 The benefit of registering a library with the Kernel is that once it's
 registered it can hook-in to Kernel via special interface and extend it.
 
-At this point only one hook is supported which enables modules to register
-their own service configurations with the Kernel's DI container.
+There are only two extension points available at this point.
 
-> Future versions may include more extension points of course (one example
-> would be - Kernel's lifecycle events).
+The first one enables modules to register their own service configurations with
+the Kernel's DI container. See `KernelModule.getServiceConfiguration()`.
 
-In order to leverage this interface module must declare a class extending
-`KernelModule` base class and overriding `getServiceConfiguration` method
-if necessary.
+The other extension point enables module-specific initialization code to
+be executed after Kernel is fully loaded and ready.
+See `KernelModule.initialize()` for more details.
+
+> Future versions may include more extension points..
+
 
 Simple example of registering a module with it's own service configuration:
 
@@ -121,7 +122,7 @@ import 'user_management.dart';
 
 void main() {
   var kernel = new Kernel('prod', {}, [
-    new Symbol('my_project.user_management'),
+    new UserManagementModule(),
   ]);
   // accessToken will be injected into the UserManager instance from
   // the environment variable as defined in our configuration above.
