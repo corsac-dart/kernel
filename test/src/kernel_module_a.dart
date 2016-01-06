@@ -1,13 +1,15 @@
 library corsac_kernel.test.module_a;
 
 import 'package:corsac_kernel/corsac_kernel.dart';
+import 'dart:async';
 
 class ModuleAService {}
 
 class ModuleA extends KernelModule {
   bool initialized = false;
   @override
-  void initialize(Kernel kernel) {
+  Future initialize(Kernel kernel) {
     initialized = true;
+    return super.initialize(kernel);
   }
 }

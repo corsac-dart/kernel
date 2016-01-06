@@ -2,6 +2,7 @@ library corsac_kernel.test.module_b;
 
 import 'package:corsac_kernel/corsac_kernel.dart';
 import 'package:corsac_di/corsac_di.dart';
+import 'dart:async';
 
 class ModuleB extends KernelModule {
   bool initialized = false;
@@ -12,8 +13,9 @@ class ModuleB extends KernelModule {
   }
 
   @override
-  void initialize(Kernel kernel) {
+  Future initialize(Kernel kernel) {
     initialized = true;
+    return super.initialize(kernel);
   }
 }
 

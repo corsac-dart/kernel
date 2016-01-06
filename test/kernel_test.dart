@@ -8,9 +8,9 @@ import 'src/kernel_module_b.dart';
 
 void main() {
   group('Kernel:', () {
-    test('it registers service configuration for modules', () {
+    test('it registers service configuration for modules', () async {
       List<KernelModule> modules = [new ModuleA(), new ModuleB()];
-      var kernel = new Kernel('test', {}, modules);
+      var kernel = await Kernel.build('test', {}, modules);
 
       expect(kernel.container.get(ModuleAService),
           new isInstanceOf<ModuleAService>());
@@ -18,9 +18,9 @@ void main() {
       expect(service, new isInstanceOf<ModuleBService>());
     });
 
-    test('it calls module initialization hooks', () {
+    test('it calls module initialization hooks', () async {
       List<KernelModule> modules = [new ModuleA(), new ModuleB()];
-      new Kernel('test', {}, modules);
+      await Kernel.build('test', {}, modules);
       expect((modules.first as ModuleA).initialized, isTrue);
       expect((modules.last as ModuleB).initialized, isTrue);
     });

@@ -120,8 +120,8 @@ library my_project;
 import 'package:corsac_kernel/corsac_kernel.dart';
 import 'user_management.dart';
 
-void main() {
-  var kernel = new Kernel('prod', {}, [
+void main() async {
+  var kernel = await Kernel.build('prod', {}, [
     new UserManagementModule(),
   ]);
   // accessToken will be injected into the UserManager instance from

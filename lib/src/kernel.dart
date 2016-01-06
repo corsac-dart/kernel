@@ -36,8 +36,8 @@ class Kernel {
   /// this kernel. __Please note that order of modules in this list is
   /// important__. If modules define their own service configurations then
   /// later configuration will overwrite earlier ones if keys are the same.
-  factory Kernel(
-      String environment, Map parameters, List<KernelModule> modules) {
+  static Future<Kernel> build(
+      String environment, Map parameters, List<KernelModule> modules) async {
     var configs = new List<Map>();
     configs.add(new Map.from(parameters));
 
@@ -48,7 +48,9 @@ class Kernel {
     var kernel = new Kernel._(environment, parameters,
         new Container.build(configs), new List.unmodifiable(modules));
 
-    modules.forEach((m) => m.initialize(kernel));
+    for (var module in modules) {
+      await module.initialize(kernel);
+    }
 
     return kernel;
   }
@@ -95,5 +97,5 @@ abstract class KernelModule {
   /// Runs initialization tasks for this module.
   ///
   /// This hook is called after [Kernel] has been fully loaded.
-  void initialize(Kernel kernel) {}
+  Future initialize(Kernel kernel) => new Future.value();
 }
