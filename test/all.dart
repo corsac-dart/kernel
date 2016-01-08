@@ -1,4 +1,4 @@
-library corsac_kernel.test.all;
+library corsac_kernel.tests.all;
 
 import 'kernel_test.dart' as kernel_test;
 

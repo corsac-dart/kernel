@@ -9,6 +9,7 @@ Kernel library built on top of Dart's library system.
 * Enables dependency inversion via built-in DI container
  (see [Corsac DI](https://github.com/corsac-dart/di) for details).
 * Provides simple module system based on Dart's built-in libraries.
+* Provides a way to execute business transactions in isolation.
 
 Despite of how it sounds this is actually a very tiny library (current
   implementation is way less than 100 lines of code).

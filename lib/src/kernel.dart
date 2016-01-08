@@ -59,6 +59,24 @@ class Kernel {
   ///
   /// This is just a shortcut for `container.get()`.
   dynamic get(dynamic id) => container.get(id);
+
+  /// Executes [transaction] in a [Zone].
+  ///
+  /// The [onError] callback (if provided) will be passed to `runZoned` as is.
+  Future execute(transaction(),
+      {ZoneSpecification zoneSpecification, Function onError}) {
+    var state = new Map();
+    for (var m in modules) {
+      state.addAll(m.initializeTransactionState(this));
+    }
+
+    var r = runZoned(transaction,
+        zoneValues: state,
+        zoneSpecification: zoneSpecification,
+        onError: onError);
+
+    return (r is Future) ? r : new Future.value(r);
+  }
 }
 
 /// Base class for Kernel modules.
@@ -98,4 +116,20 @@ abstract class KernelModule {
   ///
   /// This hook is called after [Kernel] has been fully loaded.
   Future initialize(Kernel kernel) => new Future.value();
+
+  /// Returns a Map of transaction-local values that modules wish to register
+  /// for transaction before it's executed.
+  ///
+  /// This hook is called by `Kernel.execute()` to initialize shared state for
+  /// the transaction which is about to be executed.
+  ///
+  /// Behind the hood the values returned by this hook will be passed to the
+  /// `runZoned()` call as zone-local values.
+  ///
+  /// During transaction execution you can access this values via
+  /// `Zone.current[#key]`, where `#key` corresponds to a key in the returned
+  /// Map.
+  ///
+  /// Refer to documentation on Zones and zone-local values for more details.
+  Map initializeTransactionState(Kernel kernel) => new Map();
 }
