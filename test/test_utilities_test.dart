@@ -14,18 +14,18 @@ void main() {
       return Kernel.build('test', {}, modules);
     });
 
-    test('it executes a transaction', () {
-      transaction((Kernel kernel) {
+    test('it executes a task', () {
+      kernelExecute((Kernel kernel) {
         expect(kernel, new isInstanceOf<Kernel>());
       });
     });
 
-    test('it executes a transaction with error', () {
-      transaction((Kernel kernel) {
+    test('it executes a task with an error', () {
+      kernelExecute((Kernel kernel) {
         var fu = () {
-          throw new ArgumentError();
+          throw 'Task error';
         };
-        expect(fu, throwsArgumentError);
+        expect(fu, throwsA('Task error'));
       });
     });
   });

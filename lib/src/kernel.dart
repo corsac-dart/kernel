@@ -1,10 +1,6 @@
 part of corsac_kernel;
 
-/// Generic Kernel implementation with following features:
-///
-/// * Enables dependency inversion via built-in DI container
-///   (see [Corsac DI](https://github.com/corsac-dart/di)).
-/// * Provides simple module-based system.
+/// Corsac Kernel.
 class Kernel {
   /// Environment for this kernel.
   final String environment;
@@ -57,36 +53,31 @@ class Kernel {
 
   /// Returns Kernel's container entry.
   ///
-  /// This is just a shortcut for `container.get()`.
-  dynamic get(dynamic id) => container.get(id);
+  /// This is a shortcut for `container.get()`.
+  dynamic get(id) => container.get(id);
 
-  /// Executes [transaction] in a [Zone].
-  ///
-  /// The [onError] callback (if provided) will be passed to `runZoned` as is.
-  Future execute(transaction(),
-      {ZoneSpecification zoneSpecification, Function onError}) {
+  /// Executes [task] in a [Zone].
+  Future execute(task()) {
     var state = new Map();
     for (var m in modules) {
-      state.addAll(m.initializeTransactionState(this));
+      state.addAll(m.initializeTask(this));
     }
 
-    var r = runZoned(transaction,
-        zoneValues: state,
-        zoneSpecification: zoneSpecification,
-        onError: onError);
+    var r = runZoned(task, zoneValues: state);
 
-    return (r is Future) ? r : new Future.value(r);
+    Future future = (r is Future) ? r : new Future.value(r);
+
+    return future.whenComplete(() {
+      return Future.wait(modules.map((_) => _.finalizeTask(this)));
+    });
   }
 }
 
 /// Base class for Kernel modules.
 ///
-/// This class provides interface for interacting with the Kernel in certain
-/// ways. Currently this class provides a hook for module-specific service
-/// configurations.
+/// This class provides interface for interacting with the Kernel.
 ///
-/// To use it in your module's library just declare a subclass and override
-/// necessary method(s). For instance:
+/// Example of a module:
 ///
 ///     library my_project.user_management;
 ///
@@ -117,19 +108,27 @@ abstract class KernelModule {
   /// This hook is called after [Kernel] has been fully loaded.
   Future initialize(Kernel kernel) => new Future.value();
 
-  /// Returns a Map of transaction-local values that modules wish to register
-  /// for transaction before it's executed.
+  /// Returns a Map of task-local values that modules wish to register
+  /// for a task before it's executed.
   ///
   /// This hook is called by `Kernel.execute()` to initialize shared state for
-  /// the transaction which is about to be executed.
+  /// the task which is about to be executed.
   ///
-  /// Behind the hood the values returned by this hook will be passed to the
+  /// Behind the hood the values map returned by this hook will be passed to the
   /// `runZoned()` call as zone-local values.
   ///
-  /// During transaction execution you can access this values via
+  /// During task execution these values can be accessed via
   /// `Zone.current[#key]`, where `#key` corresponds to a key in the returned
   /// Map.
   ///
   /// Refer to documentation on Zones and zone-local values for more details.
-  Map initializeTransactionState(Kernel kernel) => new Map();
+  Map initializeTask(Kernel kernel) => new Map();
+
+  /// Finalizes task execution.
+  ///
+  /// Modules should override this hook if they wish to perform any action
+  /// after [Kernel] task has been executed.
+  ///
+  /// A typical example could be committing a database transaction.
+  Future finalizeTask(Kernel) => new Future.value();
 }

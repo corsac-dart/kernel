@@ -13,5 +13,6 @@ class ModuleA extends KernelModule {
     return super.initialize(kernel);
   }
 
-  Map initializeTransactionState(Kernel kernel) => {#identityMap: new Map()};
+  @override
+  Map initializeTask(Kernel kernel) => {#identityMap: new Map()};
 }

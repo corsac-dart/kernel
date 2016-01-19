@@ -26,7 +26,7 @@ void main() {
       expect((modules.last as ModuleB).initialized, isTrue);
     });
 
-    test('it executes a transaction', () async {
+    test('it executes a task', () async {
       List<KernelModule> modules = [new ModuleA(), new ModuleB()];
       var kernel = await Kernel.build('test', {}, modules);
       var isExecuted = false;
@@ -36,20 +36,33 @@ void main() {
       expect(isExecuted, isTrue);
     });
 
-    test('it does not share state between transaction', () async {
+    test('it does not share state between tasks', () async {
       List<KernelModule> modules = [new ModuleA(), new ModuleB()];
       var kernel = await Kernel.build('test', {}, modules);
-      kernel.execute(() async {
+      kernel.execute(() {
         Map state = Zone.current[#identityMap];
         state['test1'] = 'unique-value';
         expect(state, isNot(containsPair('test2', 'unique-value2')));
       });
 
-      kernel.execute(() async {
+      kernel.execute(() {
         Map state = Zone.current[#identityMap];
         state['test2'] = 'unique-value';
         expect(state, isNot(containsPair('test1', 'unique-value')));
       });
     });
+
+    test('it throws error if module finalizeTask fails', () async {
+      List<KernelModule> modules = [new ModuleC()];
+      var kernel = await Kernel.build('test', {}, modules);
+      expect(kernel.execute(() {}), throwsA('Finalize error'));
+    });
   });
+}
+
+class ModuleC extends KernelModule {
+  @override
+  Future finalizeTask(Kernel kernel) {
+    throw 'Finalize error';
+  }
 }
