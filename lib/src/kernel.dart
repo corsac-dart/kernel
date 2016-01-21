@@ -9,7 +9,7 @@ class Kernel {
   final Map<String, dynamic> parameters;
 
   /// Dependency injection container used by this kernel.
-  final Container container;
+  final DIContainer container;
 
   final List<KernelModule> modules;
 
@@ -42,7 +42,7 @@ class Kernel {
     }
 
     var kernel = new Kernel._(environment, parameters,
-        new Container.build(configs), new List.unmodifiable(modules));
+        new DIContainer.build(configs), new List.unmodifiable(modules));
 
     for (var module in modules) {
       await module.initialize(kernel);
