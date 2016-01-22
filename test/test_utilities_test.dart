@@ -6,6 +6,7 @@ import 'package:corsac_kernel/test.dart';
 
 import 'src/kernel_module_a.dart';
 import 'src/kernel_module_b.dart';
+import 'dart:async';
 
 void main() {
   group('TestUtilities:', () {
@@ -26,6 +27,18 @@ void main() {
           throw 'Task error';
         };
         expect(fu, throwsA('Task error'));
+      });
+    });
+
+    test('it executes a task with an async error', () {
+      kernelExecute((Kernel kernel) {
+        var fu = () async {
+          return new Future.delayed(new Duration(milliseconds: 200), () {
+            throw 'Task error';
+          });
+        };
+
+        expect(fu(), throwsA('Task error'));
       });
     });
   });

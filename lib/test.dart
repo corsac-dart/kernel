@@ -20,8 +20,9 @@ void setUpKernel(Future<Kernel> buildKernel()) {
   });
 }
 
-Future kernelExecute(body(Kernel kernel)) {
-  return _kernel.execute(() {
+kernelExecute(body(Kernel kernel)) {
+  var f = _kernel.execute(() {
     return body(_kernel);
   });
+  expect(f, completes);
 }
