@@ -57,6 +57,12 @@ void main() {
       var kernel = await Kernel.build('test', {}, modules);
       expect(kernel.execute(() {}), throwsA('Finalize error'));
     });
+
+    test('it registers itself with the DI container', () async {
+      List<KernelModule> modules = [new ModuleA(), new ModuleB()];
+      var kernel = await Kernel.build('test', {}, modules);
+      expect(kernel.get(Kernel), same(kernel));
+    });
   });
 }
 

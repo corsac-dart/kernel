@@ -41,8 +41,10 @@ class Kernel {
       configs.add(m.getServiceConfiguration(environment));
     }
 
-    var kernel = new Kernel._(environment, parameters,
-        new DIContainer.build(configs), new List.unmodifiable(modules));
+    var container = new DIContainer.build(configs);
+    var kernel = new Kernel._(
+        environment, parameters, container, new List.unmodifiable(modules));
+    container.set(Kernel, kernel);
 
     for (var module in modules) {
       await module.initialize(kernel);
