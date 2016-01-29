@@ -16,6 +16,9 @@ get started and scale when needed.
 
 ## 1. Introduction / Why
 
+> If you prefer to learn by example feel free to skip to section
+> __2. How__
+
 All applications of somewhat significant complexity tend to have a central
 component which is responsible for assembling the app.
 
@@ -106,7 +109,7 @@ abstract class KernelModule {
 
 ### 3.1 Module service configuration
 
-The `Kernel` itself is built on top of a DI container. Specifically container provided by `corsac-dart/di`. This means that one can use Kernel to access
+The `Kernel` itself is built on top of a DI container. Specifically container provided by [corsac-dart/di](https://github.com/corsac-dart/di). This means that one can use Kernel to access
 all the application services. For instance:
 
 ```dart
@@ -129,7 +132,7 @@ foo.bar.baz(); // prints 'foo bar baz';
 The `Kernel.get()` method is just a shortcut for `Kernel.container.get()`.
 
 > Read more about how `DIContainer` works in the documentation for
-> `corsac-dart/di` package.
+> [corsac-dart/di](https://github.com/corsac-dart/di) package.
 
 The `KernelModule.getServiceConfiguration()` hook is called by `Kernel` during
 initialization phase (inside `Kernel.build()`). Returned configuration map
