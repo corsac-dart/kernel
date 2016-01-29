@@ -190,8 +190,37 @@ kernel = await Kernel.build('test', {}, [
 print(kernel.get(LogHandler)); // prints 'Instance of <NullLogHandler>'
 ```
 
-## 4. `Kernel.execute` and application tasks
+### 3.2 Module initialization
 
+```dart
+Future initialize(Kernel kernel);
+```
+
+_TBD_
+
+## 4. Application tasks and `Kernel.execute()`
+
+```dart
+Future execute(task());
+```
+
+_TBD_
+
+### 4.1 Module specific task initialization
+
+```dart
+Map initializeTask(Kernel kernel);
+```
+
+_TBD_
+
+### 4.2 Module specific task finalization
+
+```dart
+Future finalizeTask(Kernel kernel);
+```
+
+_TBD_
 
 ## License
 
