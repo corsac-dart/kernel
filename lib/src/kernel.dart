@@ -101,7 +101,7 @@ abstract class KernelModule {
   /// Returned map is a configuration as expected by `corsac_di` container.
   ///
   /// Override this method to customize services provided by this module.
-  Map<dynamic, dynamic> getServiceConfiguration(String environment) {
+  Map getServiceConfiguration(String environment) {
     return {};
   }
 
