@@ -109,6 +109,10 @@ abstract class KernelModule {
 
 ### 3.1 Module service configuration
 
+```dart
+Map getServiceConfiguration(String environment);
+```
+
 The `Kernel` itself is built on top of a DI container. Specifically container provided by [corsac-dart/di](https://github.com/corsac-dart/di). This means that one can use Kernel to access
 all the application services. For instance:
 
