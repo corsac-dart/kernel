@@ -76,7 +76,7 @@ include `dev`, `local`, `test`, `qa`, `ci`, `prod` and so forth.
 
 Based on the environment setting applications can alter their behavior.
 
-For instance, if application depends on some external service which makes
+For instance, if an application depends on some external service which makes
 it hard to run the test suite, one can configure the app to use "stub"
 implementation for this external service in the `test` environment.
 
@@ -88,7 +88,7 @@ interface. Since we didn't define any modules this list is empty.
 
 ## 3. Modules
 
-Main purpose of modules is to make it possible to split big application into
+Main purpose of modules is to split big application into
 a set of small logical pieces which makes it easier to maintain and extend.
 
 As added benefit modules can also hook in to certain kernel's lifecycle
@@ -111,7 +111,9 @@ abstract class KernelModule {
 Map getServiceConfiguration(String environment);
 ```
 
-The `Kernel` itself is built on top of a DI container. Specifically container provided by [corsac-dart/di](https://github.com/corsac-dart/di). This means that one can use Kernel to access
+The `Kernel` itself is built on top of a DI container. Specifically container
+provided by [corsac-dart/di](https://github.com/corsac-dart/di).
+This means that one can use Kernel to access
 all the application services. For instance:
 
 ```dart

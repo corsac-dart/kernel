@@ -55,22 +55,24 @@ class Kernel {
 
   /// Returns Kernel's container entry.
   ///
-  /// This is a shortcut for `container.get()`.
+  /// This is a shortcut for `kernel.container.get(id)`.
   dynamic get(id) => container.get(id);
 
   /// Executes [task] in a [Zone].
   Future execute(task()) {
-    var state = new Map();
-    for (var m in modules) {
-      state.addAll(m.initializeTask(this));
-    }
+    return new Future.sync(() {
+      var state = new Map();
+      for (var m in modules) {
+        state.addAll(m.initializeTask(this));
+      }
 
-    var r = runZoned(task, zoneValues: state);
+      var r = runZoned(task, zoneValues: state);
 
-    Future future = (r is Future) ? r : new Future.value(r);
+      Future future = (r is Future) ? r : new Future.value(r);
 
-    return future.whenComplete(() {
-      return Future.wait(modules.map((_) => _.finalizeTask(this)));
+      return future.whenComplete(() {
+        return Future.wait(modules.map((_) => _.finalizeTask(this)));
+      });
     });
   }
 }
