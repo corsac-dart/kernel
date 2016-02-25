@@ -85,8 +85,19 @@ void main() {
         return new Future.error('Async task error');
       }), throwsA('Async task error'));
     });
+
+    test('it resolves task parameters', () async {
+      List<KernelModule> modules = [new ModuleA()];
+      var kernel = await Kernel.build('test', {}, modules);
+      kernel.execute((Kernel actual, ExampleService service) {
+        expect(actual, same(kernel));
+        expect(service, new isInstanceOf<ExampleService>());
+      });
+    });
   });
 }
+
+class ExampleService {}
 
 class ModuleC extends KernelModule {
   @override

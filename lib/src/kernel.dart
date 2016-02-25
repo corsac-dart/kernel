@@ -59,14 +59,24 @@ class Kernel {
   dynamic get(id) => container.get(id);
 
   /// Executes [task] in a [Zone].
-  Future execute(task()) {
+  Future execute(Function task) {
+    ClosureMirror mirror = reflect(task);
+    var positionalArguments = [];
+    for (var param in mirror.function.parameters) {
+      if (!param.isNamed) {
+        positionalArguments.add(get(param.type.reflectedType));
+      }
+    }
+
     return new Future.sync(() {
       var state = new Map();
       for (var m in modules) {
         state.addAll(m.initializeTask(this));
       }
 
-      var r = runZoned(task, zoneValues: state);
+      var r = runZoned(() {
+        return mirror.apply(positionalArguments).reflectee;
+      }, zoneValues: state);
 
       Future future = (r is Future) ? r : new Future.value(r);
 
