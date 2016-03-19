@@ -33,7 +33,8 @@ There are benefits to this approach:
   their own way of doing that.
 * Applications usually have a "frontend" (Web Client or HTTP API) which
   means a specific framework will be used anyway. Decision on
-  using such a framework, transitively means using this framework's way to structure your project.
+  using such a framework, transitively means using this framework's way to
+  structure your project.
 * You can get many things for free just by using a very popular framework.
 
 There are also downsides to this approach.
@@ -101,7 +102,8 @@ abstract class KernelModule {
   Map getServiceConfiguration(String environment);
   Future initialize(Kernel kernel);
   Map initializeTask(Kernel kernel);
-  Future finalizeTask(Kernel);
+  Future finalizeTask(Kernel kernel);
+  Future shutdown(Kernel kernel);
 }
 ```
 
@@ -111,10 +113,9 @@ abstract class KernelModule {
 Map getServiceConfiguration(String environment);
 ```
 
-The `Kernel` itself is built on top of a DI container. Specifically container
-provided by [corsac-dart/di](https://github.com/corsac-dart/di).
-This means that one can use Kernel to access
-all the application services. For instance:
+The `Kernel` itself is built on top of a DI container.
+This means that one can use Kernel to access all the application services.
+For instance:
 
 ```dart
 class FooService {
@@ -142,7 +143,7 @@ The `KernelModule.getServiceConfiguration()` hook is called by `Kernel` during
 initialization phase (inside `Kernel.build()`). Returned configuration map
 is registered with the Kernel's DI container.
 
-> It is important to note that if two modules provide configuration for the
+> Note that if two modules provide configuration for the
 > same container entry, value provided by the later module will be used.
 
 ```dart
@@ -198,15 +199,30 @@ print(kernel.get(LogHandler)); // prints 'Instance of <NullLogHandler>'
 Future initialize(Kernel kernel);
 ```
 
-_TBD_
+This hook is called only once at the beginning of Kernel's lifecycle.
+
+### 3.3 Module shutdown
+
+```dart
+Future shutdown(Kernel kernel);
+```
+
+This hook is called only once at the end of Kernel's lifecycle.
 
 ## 4. Application tasks and `Kernel.execute()`
 
 ```dart
-Future execute(task());
+Future execute(Function task);
 ```
 
-_TBD_
+Kernel provides a way to execute application tasks in an isolated scope.
+Under the hood it uses Dart's Zones and standard `runZoned()` function. This
+provides a way for modules to define shared state which is only
+available within the scope of currently executed task.
+
+> As an example of a task one can think of HTTP server application which main
+> job is to handle incoming HTTP requests. In this case each HTTP request is a
+> separate task which can be wrapped in `Kernel.execute()`.
 
 ### 4.1 Module specific task initialization
 
@@ -214,7 +230,10 @@ _TBD_
 Map initializeTask(Kernel kernel);
 ```
 
-_TBD_
+This hook is called once for each task before the task is executed by the
+Kernel. Returned map object will be added to Zone-local values and can contain
+any data this module wishes to register for current task. This data can later
+be accessed by this module or any application service via global `Zone.current`.
 
 ### 4.2 Module specific task finalization
 
@@ -222,7 +241,9 @@ _TBD_
 Future finalizeTask(Kernel kernel);
 ```
 
-_TBD_
+This hook is called once for each task after it's been executed (with or
+without error). This enables modules to perform necessary actions like
+commit a database transaction or clean up.
 
 ## License
 

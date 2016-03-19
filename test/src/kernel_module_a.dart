@@ -7,6 +7,7 @@ class ModuleAService {}
 
 class ModuleA extends KernelModule {
   bool initialized = false;
+  bool isShutdown = false;
   @override
   Future initialize(Kernel kernel) {
     initialized = true;
@@ -15,4 +16,10 @@ class ModuleA extends KernelModule {
 
   @override
   Map initializeTask(Kernel kernel) => {#identityMap: new Map()};
+
+  @override
+  Future shutdown(Kernel kernel) {
+    isShutdown = true;
+    return new Future.value();
+  }
 }

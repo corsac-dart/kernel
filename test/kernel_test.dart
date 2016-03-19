@@ -94,6 +94,14 @@ void main() {
         expect(service, new isInstanceOf<ExampleService>());
       });
     });
+
+    test('it calls shutdown hooks for all modules', () async {
+      var moduleA = new ModuleA();
+
+      var kernel = await Kernel.build('test', {}, [moduleA]);
+      await kernel.shutdown();
+      expect(moduleA.isShutdown, isTrue);
+    });
   });
 }
 

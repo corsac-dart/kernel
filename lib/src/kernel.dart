@@ -85,6 +85,11 @@ class Kernel {
       });
     });
   }
+
+  /// Shuts down any processes running within this kernel. This effectively
+  /// indicates end of this kernel's lifecycle and it shouldn't be used after
+  /// it's been shutdown.
+  Future shutdown() => Future.wait(modules.map((_) => _.shutdown(this)));
 }
 
 /// Base class for Kernel modules.
@@ -144,5 +149,12 @@ abstract class KernelModule {
   /// after [Kernel] task has been executed.
   ///
   /// A typical example could be committing a database transaction.
-  Future finalizeTask(Kernel) => new Future.value();
+  Future finalizeTask(Kernel kernel) => new Future.value();
+
+  /// Runs shutdown tasks for this module.
+  ///
+  /// This hook is called by [Kernel.shutdown] for all modules. Modules
+  /// are responsible for cleaning up their state here and closing any open
+  /// connections.
+  Future shutdown(Kernel kernel) => new Future.value();
 }
